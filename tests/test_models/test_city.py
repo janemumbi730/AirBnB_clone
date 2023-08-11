@@ -6,6 +6,7 @@ class TestCity(unittest.TestCase):
  
     def tearDown(self):
         self.city = None
+     
     def setUp(self):
         self.city = City()
 
@@ -16,7 +17,7 @@ class TestCity(unittest.TestCase):
         self.assertIn("created_at", city_str)
         self.assertIn("updated_at", city_str)
 
-   def test_attributes_initialization(self):
+    def test_attributes_initialization(self):
         self.assertEqual(self.city.state_id, "")
         self.assertEqual(self.city.name, "")
         self.assertTrue(hasattr(self.city, "id"))
