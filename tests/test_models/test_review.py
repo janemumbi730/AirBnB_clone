@@ -15,7 +15,7 @@ class TestReview(unittest.TestCase):
         new_updated_at = self.review.updated_at
         self.assertNotEqual(old_updated_at, new_updated_at)
 
-      def test_attributes_initialization(self):
+    def test_attributes_initialization(self):
         self.assertEqual(self.review.place_id, "")
         self.assertEqual(self.review.user_id, "")
         self.assertEqual(self.review.text, "")
