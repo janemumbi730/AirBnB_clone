@@ -3,7 +3,7 @@ from models.place import Place
 
 
 class TestPlace(unittest.TestCase):
-   def setUp(self):
+    def setUp(self):
         self.place = Place()
 
     def tearDown(self):
