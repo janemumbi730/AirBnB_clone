@@ -20,7 +20,7 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
   
- def save(self):
+  def save(self):
         """
         JSON file objects
         """
