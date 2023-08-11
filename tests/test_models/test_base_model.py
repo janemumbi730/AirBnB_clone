@@ -13,11 +13,16 @@ class TestBaseModel(unittest.TestCase):
         self.assertIsInstance(result, BaseModel)
 
     def test_str_method(self):
+         # Arrange
         my_model = BaseModel()
         expected_str = f"[BaseModel] ({my_model.id}) {my_model.__dict__}"
+
+        # Act
         result_str = str(my_model)
 
+        # Assert
         self.assertEqual(result_str, expected_str)
+
       
     def test_attributes_initialization(self):
         my_model = BaseModel()
