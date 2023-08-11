@@ -3,7 +3,7 @@ from models.amenity import Amenity
 
 
 class TestAmenity(unittest.TestCase):
-   def tearDown(self):
+    def tearDown(self):
         self.amenity = None
      
     def setUp(self):
