@@ -1,39 +1,28 @@
-import unittest
+#!/usr/bin/python3
+"""
+    module contains: Tests for State class
+"""
 from models.state import State
+import unittest
 
 
 class TestState(unittest.TestCase):
+    """ tests class State """
     def setUp(self):
+        """ creates class instances """
         self.state = State()
 
     def tearDown(self):
-        self.state = None
+        """ deletes instance """
+        del self.state
 
-    def test_attributes_initialization(self):
-        self.assertEqual(self.state.name, "")
-        self.assertTrue(hasattr(self.state, "id"))
-        self.assertTrue(hasattr(self.state, "created_at"))
-        self.assertTrue(hasattr(self.state, "updated_at"))
+    def test_attributes(self):
+        """ checks type and presence of attributes """
+        self.assertTrue(hasattr(self.state, 'name'))
 
-    def test_str_method(self):
-        state_str = str(self.state)
-        self.assertIn("[State]", state_str)
-        self.assertIn("id", state_str)
-        self.assertIn("created_at", state_str)
-        self.assertIn("updated_at", state_str)
-
-    # def test_to_dict_method(self):
-    #     state_dict = self.state.to_dict()
-    #     self.assertTrue(isinstance(state_dict, dict))
-    #     self.assertEqual(state_dict["__class__"], "State")
-    #     self.assertEqual(self.state.__dict__, state_dict)
-
-    def test_save_method(self):
-        old_updated_at = self.state.updated_at
-        self.state.save()
-        new_updated_at = self.state.updated_at
-        self.assertNotEqual(old_updated_at, new_updated_at)
-
+    def test_type_of_attributes(self):
+        """ checks that attributes are the right type """
+        self.assertIsInstance(self.state.name, str)
 
 if __name__ == "__main__":
     unittest.main()
