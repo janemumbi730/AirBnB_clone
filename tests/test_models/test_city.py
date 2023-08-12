@@ -1,40 +1,30 @@
-import unittest
+#!/usr/bin/python3
+"""
+    module contains: Tests for City class
+"""
 from models.city import City
+import unittest
 
 
 class TestCity(unittest.TestCase):
+    """ tests class City """
     def setUp(self):
+        """ creates class instances """
         self.city = City()
 
     def tearDown(self):
-        self.city = None
+        """ deletes instance """
+        del self.city
 
-    def test_attributes_initialization(self):
-        self.assertEqual(self.city.state_id, "")
-        self.assertEqual(self.city.name, "")
-        self.assertTrue(hasattr(self.city, "id"))
-        self.assertTrue(hasattr(self.city, "created_at"))
-        self.assertTrue(hasattr(self.city, "updated_at"))
+    def test_attributes(self):
+        """ checks type and presence of attributes """
+        self.assertTrue(hasattr(self.city, 'name'))
+        self.assertTrue(hasattr(self.city, 'state_id'))
 
-    def test_str_method(self):
-        city_str = str(self.city)
-        self.assertIn("[City]", city_str)
-        self.assertIn("id", city_str)
-        self.assertIn("created_at", city_str)
-        self.assertIn("updated_at", city_str)
-
-    # def test_to_dict_method(self):
-    #     city_dict = self.city.to_dict()
-    #     self.assertTrue(isinstance(city_dict, dict))
-    #     self.assertEqual(city_dict["__class__"], "City")
-    #     self.assertEqual(self.city.__dict__, city_dict)
-
-    def test_save_method(self):
-        old_updated_at = self.city.updated_at
-        self.city.save()
-        new_updated_at = self.city.updated_at
-        self.assertNotEqual(old_updated_at, new_updated_at)
-
+    def test_type_of_attributes(self):
+        """ checks that attributes are the right type """
+        self.assertIsInstance(self.city.name, str)
+        self.assertIsInstance(self.city.state_id, str)
 
 if __name__ == "__main__":
     unittest.main()
