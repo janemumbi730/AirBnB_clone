@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-import os
 import unittest
 import json
-from models.engine.file_storage import FileStorage
+import os
 from models.base_model import BaseModel
+from models.engine.file_storage import FileStorage
 
 class TestFileStorage(unittest.TestCase):
     def setUp(self):
@@ -17,6 +17,16 @@ class TestFileStorage(unittest.TestCase):
         except FileNotFoundError:
             pass
 
+    # def test_all_method_empty(self):
+    #     self.assertEqual(self.storage.all(), {})
+
+    def test_new_method(self):
+        model = BaseModel()
+        model_id = model.id
+        self.storage.new(model)
+        objects = self.storage.all()
+        self.assertIn(f"BaseModel.{model_id}", objects)
+
     def test_save_method(self):
         model = BaseModel()
         model_id = model.id
@@ -26,8 +36,7 @@ class TestFileStorage(unittest.TestCase):
             data = json.load(file)
             key = f"BaseModel.{model_id}"
             self.assertIn(key, data)
- 
-   
+
     def test_reload_method(self):
         model = BaseModel()
         model_id = model.id
@@ -38,13 +47,6 @@ class TestFileStorage(unittest.TestCase):
         key = f"BaseModel.{model_id}"
         self.assertIn(key, objects)
         self.assertTrue(isinstance(objects[key], BaseModel))
-      
-    def test_new_method(self):
-        model = BaseModel()
-        model_id = model.id
-        self.storage.new(model)
-        objects = self.storage.all()
-        self.assertIn(f"BaseModel.{model_id}", objects)
 
 if __name__ == '__main__':
     unittest.main()
