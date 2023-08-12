@@ -1,20 +1,44 @@
 #!/usr/bin/python3
 
 """
-tester for cmd
+Unittests for command interpreter
 """
 import unittest
-from console import HBNBCommand
-from unittest.mock import patch
 from io import StringIO
+from unittest.mock import patch
+from console import HBNBCommand
 
 
 class TestHBNBCommand(unittest.TestCase):
+    def setUp(self):
+        self.cmd = HBNBCommand()
 
     def tearDown(self):
         self.cmd = None
-    def setUp(self):
-        self.cmd = HBNBCommand()
+
+    def test_quit_command_success(self):
+        with patch('sys.stdout', new=StringIO()) as fake_out:
+            self.assertTrue(self.cmd.onecmd('quit'))
+            output = fake_out.getvalue().strip()
+            self.assertEqual(output, '')
+
+    def test_quit_command_with_argument(self):
+        with patch('sys.stdout', new=StringIO()) as fake_out:
+            self.assertTrue(self.cmd.onecmd('quit some_argument'))
+            output = fake_out.getvalue().strip()
+            self.assertEqual(output, '')
+
+    # def test_quit_command_uppercase(self):
+    #     with patch('sys.stdout', new=StringIO()) as fake_out:
+    #         self.assertFalse(self.cmd.onecmd('QUIT'))
+    #         output = fake_out.getvalue().strip()
+    #         self.assertEqual(output, '')
+
+    def test_quit_command_with_whitespace(self):
+        with patch('sys.stdout', new=StringIO()) as fake_out:
+            self.assertTrue(self.cmd.onecmd('  quit   '))
+            output = fake_out.getvalue().strip()
+            self.assertEqual(output, '')
 
     def test_quit_command_invalid_argument(self):
         with patch('sys.stdout', new=StringIO()) as fake_out:
@@ -23,26 +47,12 @@ class TestHBNBCommand(unittest.TestCase):
             self.assertIsNotNone(
                 output, "Expected non-empty output for an invalid command.")
 
-    def test_quit_command_with_argument(self):
+    def test_EOF_command_success(self):
         with patch('sys.stdout', new=StringIO()) as fake_out:
-            self.assertTrue(self.cmd.onecmd('quit some_argument'))
+            self.assertTrue(self.cmd.onecmd('EOF'))
             output = fake_out.getvalue().strip()
             self.assertEqual(output, '')
 
- 
-    def test_quit_command_with_whitespace(self):
-        with patch('sys.stdout', new=StringIO()) as fake_out:
-            self.assertTrue(self.cmd.onecmd('  quit   '))
-            output = fake_out.getvalue().strip()
-            self.assertEqual(output, '')
-          
-    def test_quit_command_success(self):
-        with patch('sys.stdout', new=StringIO()) as fake_out:
-            self.assertTrue(self.cmd.onecmd('quit'))
-            output = fake_out.getvalue().strip()
-            self.assertEqual(output, '')
-
-   
     def test_EOF_command_uppercase(self):
         with patch('sys.stdout', new=StringIO()) as fake_out:
             self.assertTrue(self.cmd.onecmd('EOF'))
@@ -61,13 +71,12 @@ class TestHBNBCommand(unittest.TestCase):
             output = fake_out.getvalue().strip()
             self.assertEqual(output, '')
 
- 
-    def test_EOF_command_success(self):
-        with patch('sys.stdout', new=StringIO()) as fake_out:
-            self.assertTrue(self.cmd.onecmd('EOF'))
-            output = fake_out.getvalue().strip()
-            self.assertEqual(output, '')
-   
+    # def test_EOF_command_mixed_case_whitespace(self):
+    #     with patch('sys.stdout', new=StringIO()) as fake_out:
+    #         self.assertFalse(self.cmd.onecmd(' \n EOf   \n\n\n'))
+    #         output = fake_out.getvalue().strip()
+    #         self.assertEqual(output, '')
+
     def test_EOF_command_with_multiple_whitespace(self):
         with patch('sys.stdout', new=StringIO()) as fake_out:
             self.assertTrue(self.cmd.onecmd('EOF      '))
@@ -92,9 +101,15 @@ class TestHBNBCommand(unittest.TestCase):
             output = fake_out.getvalue().strip()
             self.assertEqual(output, '')
 
-    def test_emptyline_command_with_newline(self):
+    # def test_EOF_command_with_mixed_newlines_whitespace(self):
+    #     with patch('sys.stdout', new=StringIO()) as fake_out:
+    #         self.assertFalse(self.cmd.onecmd(' \n EOf   \n\n\n'))
+    #         output = fake_out.getvalue().strip()
+    #         self.assertEqual(output, '')
+
+    def test_emptyline_command(self):
         with patch('sys.stdout', new=StringIO()) as fake_out:
-            self.cmd.onecmd('\n')
+            self.cmd.onecmd('')
             output = fake_out.getvalue().strip()
             self.assertEqual(output, '')
 
@@ -110,7 +125,12 @@ class TestHBNBCommand(unittest.TestCase):
             output = fake_out.getvalue().strip()
             self.assertEqual(output, '')
 
-   
+    def test_emptyline_command_with_newline(self):
+        with patch('sys.stdout', new=StringIO()) as fake_out:
+            self.cmd.onecmd('\n')
+            output = fake_out.getvalue().strip()
+            self.assertEqual(output, '')
+
     def test_emptyline_command_with_multiple_newlines(self):
         with patch('sys.stdout', new=StringIO()) as fake_out:
             self.cmd.onecmd('\n\n\n')
@@ -125,7 +145,23 @@ class TestHBNBCommand(unittest.TestCase):
             output_after = fake_out.getvalue().strip()
             self.assertEqual(output_after, output_before)
 
-  
+    # def test_emptyline_command_with_arguments(self):
+    #     with patch('sys.stdout', new=StringIO()) as fake_out:
+    #         self.cmd.onecmd('help')
+    #         output_before = fake_out.getvalue().strip()
+    #         self.cmd.onecmd('   some_argument   ')
+    #         output_after = fake_out.getvalue().strip()
+    #         self.assertEqual(output_after, output_before)
+
+    def test_emptyline_command_with_multiple_commands(self):
+        with patch('sys.stdout', new=StringIO()) as fake_out:
+            self.cmd.onecmd('help')
+            output_before = fake_out.getvalue().strip()
+            self.cmd.onecmd('   ')
+            self.cmd.onecmd('quit')
+            output_after = fake_out.getvalue().strip()
+            self.assertEqual(output_after, output_before)
+
     def test_create_command_success(self):
         classes = [
             'BaseModel', 'Amenity', 'City', 'Place', 'Review', 'State', 'User']
@@ -141,32 +177,26 @@ class TestHBNBCommand(unittest.TestCase):
             output = fake_out.getvalue().strip()
             self.assertEqual(output, '** class name missing **')
 
-    def test_emptyline_command_with_multiple_commands(self):
-        with patch('sys.stdout', new=StringIO()) as fake_out:
-            self.cmd.onecmd('help')
-            output_before = fake_out.getvalue().strip()
-            self.cmd.onecmd('   ')
-            self.cmd.onecmd('quit')
-            output_after = fake_out.getvalue().strip()
-            self.assertEqual(output_after, output_before)
-
     def test_create_command_invalid_class_name(self):
         with patch('sys.stdout', new=StringIO()) as fake_out:
             self.cmd.onecmd('create InvalidClass')
             output = fake_out.getvalue().strip()
             self.assertEqual(output, '** class doesn\'t exist **')
 
-  
+    def test_show_command_success(self):
+        classes = [
+            'BaseModel', 'Amenity', 'City', 'Place', 'Review', 'State', 'User']
+        for class_name in classes:
+            with patch('sys.stdout', new=StringIO()) as fake_out:
+                self.cmd.onecmd(f'show {class_name} existing-id')
+                output = fake_out.getvalue().strip()
+                self.assertEqual(output, '** no instance found **')
+
     def test_show_command_missing_class_name(self):
         with patch('sys.stdout', new=StringIO()) as fake_out:
             self.cmd.onecmd('show')
             output = fake_out.getvalue().strip()
             self.assertEqual(output, '** class name missing **')
-    def test_emptyline_command(self):
-        with patch('sys.stdout', new=StringIO()) as fake_out:
-            self.cmd.onecmd('')
-            output = fake_out.getvalue().strip()
-            self.assertEqual(output, '')
 
     def test_show_command_invalid_class_name(self):
         with patch('sys.stdout', new=StringIO()) as fake_out:
@@ -205,15 +235,14 @@ class TestHBNBCommand(unittest.TestCase):
             output = fake_out.getvalue().strip()
             self.assertEqual(output, '** class doesn\'t exist **')
 
-    
-    def test_show_command_success(self):
+    def test_destroy_command_missing_instance_id(self):
         classes = [
-            'BaseModel', 'Amenity', 'City', 'Place', 'Review', 'State', 'User']
+            'BaseModel', 'Amenity', 'City',
+            'Place', 'Review', 'State', 'User']
         for class_name in classes:
             with patch('sys.stdout', new=StringIO()) as fake_out:
-                self.cmd.onecmd(f'show {class_name} existing-id')
+                self.cmd.onecmd(f'destroy {class_name}')
                 output = fake_out.getvalue().strip()
-                self.assertEqual(output, '** no instance found **')
                 self.assertEqual(output, '** instance id missing **')
 
     def test_all_command_success(self):
@@ -225,15 +254,6 @@ class TestHBNBCommand(unittest.TestCase):
                 self.cmd.onecmd(f'all {class_name}')
                 output = fake_out.getvalue().strip()
                 self.assertTrue(output)
-    def test_update_command_no_instance_found(self):
-        classes = [
-            'BaseModel', 'Amenity', 'City', 'Place',
-            'Review', 'State', 'User']
-        for class_name in classes:
-            with patch('sys.stdout', new=StringIO()) as fake_out:
-                self.cmd.onecmd(f'update {class_name} 121212')
-                output = fake_out.getvalue().strip()
-                self.assertEqual(output, '** no instance found **')
 
     def test_all_command_invalid_class_name(self):
         with patch('sys.stdout', new=StringIO()) as fake_out:
@@ -247,11 +267,13 @@ class TestHBNBCommand(unittest.TestCase):
             'Place', 'Review', 'State', 'User']
         for class_name in classes:
             with patch('sys.stdout', new=StringIO()) as fake_out:
+                # Create an instance of the class and capture the instance ID
                 self.cmd.onecmd(f'create {class_name}')
                 instance_output = fake_out.getvalue().strip()
                 instance_id = instance_output.split()[-1]
 
-                   with patch('sys.stdout', new=StringIO()) as fake_out:
+                # Test the update command with attribute name and value
+                with patch('sys.stdout', new=StringIO()) as fake_out:
                     self.cmd.onecmd(
                          f'update {class_name} {instance_id}\
                              attribute_name "attribute_value"')
@@ -286,11 +308,12 @@ class TestHBNBCommand(unittest.TestCase):
             'Place', 'Review', 'State', 'User']
         for class_name in classes:
             with patch('sys.stdout', new=StringIO()) as fake_out:
+                # Create an instance of the class and capture the instance ID
                 self.cmd.onecmd(f'create {class_name}')
                 instance_output = fake_out.getvalue().strip()
                 instance_id = instance_output.split()[-1]
 
-
+                # Test the update command without attribute name
                 with patch('sys.stdout', new=StringIO()) as fake_out:
                     self.cmd.onecmd(f'update {class_name} {instance_id}')
                     output = fake_out.getvalue().strip()
@@ -302,10 +325,12 @@ class TestHBNBCommand(unittest.TestCase):
             'Place', 'Review', 'State', 'User']
         for class_name in classes:
             with patch('sys.stdout', new=StringIO()) as fake_out:
+                # Create an instance of the class and capture the instance ID
                 self.cmd.onecmd(f'create {class_name}')
                 instance_output = fake_out.getvalue().strip()
                 instance_id = instance_output.split()[-1]
 
+                # Test the update command without value
                 with patch('sys.stdout', new=StringIO()) as fake_out:
                     self.cmd.onecmd(
                         f'update {class_name} {instance_id} attribute_name')
@@ -337,23 +362,23 @@ class TestHBNBCommand(unittest.TestCase):
                 self.cmd.onecmd(f'destroy {class_name} 121212')
                 output = fake_out.getvalue().strip()
                 self.assertEqual(output, '** no instance found **')
-   
-   def test_destroy_command_missing_instance_id(self):
-        classes = [
-            'BaseModel', 'Amenity', 'City',
-            'Place', 'Review', 'State', 'User']
-        for class_name in classes:
-            with patch('sys.stdout', new=StringIO()) as fake_out:
-                self.cmd.onecmd(f'destroy {class_name}')
-                output = fake_out.getvalue().strip()
-   
-   def test_all_command_nonexistent_class_name(self):
+
+    def test_all_command_nonexistent_class_name(self):
         with patch('sys.stdout', new=StringIO()) as fake_out:
             self.cmd.onecmd('all MyModel')
             output = fake_out.getvalue().strip()
             self.assertEqual(output, '** class doesn\'t exist **')
 
-    
+    def test_update_command_no_instance_found(self):
+        classes = [
+            'BaseModel', 'Amenity', 'City', 'Place',
+            'Review', 'State', 'User']
+        for class_name in classes:
+            with patch('sys.stdout', new=StringIO()) as fake_out:
+                self.cmd.onecmd(f'update {class_name} 121212')
+                output = fake_out.getvalue().strip()
+                self.assertEqual(output, '** no instance found **')
+
 
 if __name__ == '__main__':
     unittest.main()
