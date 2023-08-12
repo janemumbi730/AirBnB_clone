@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""airbnb console"""
+"""Console intepreter for AirBNB clone"""
 import cmd
 from models.base_model import BaseModel
 from models.amenity import Amenity
@@ -13,25 +13,26 @@ import models
 
 class HBNBCommand(cmd.Cmd):
     """
-    defines class HBNBCommand
+    Create class HBNBCommand
     """
     prompt = "(hbnb)"  # Set your custom prompt here
     classes = [
             'BaseModel', 'Amenity', 'City', 'Place', 'Review', 'State', 'User']
-  def emptyline(self):
-        """Does nothing when finding empty line"""
+
+    def do_EOF(self, line):
+        """Checks end of file"""
+        return True
+
+    def do_quit(self, arg):
+        """Quit command to exit the program"""
+        return True
+
+    def emptyline(self):
+        """Do nothing if empty line is passed"""
         pass
-    
-   def do_EOF(self, line):
-        """sees exit of file"""
-        return True
-     
-   def do_quit(self, arg):
-        """the command to exit program"""
-        return True
-     
+
     def do_create(self, args):
-        """creates chances"""
+        """Creates a new instance"""
         if args:
             if args in self.classes:
                 # class_obj = getattr(base_model, args)
@@ -43,36 +44,8 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** class name missing **")
 
-   
-    def do_destroy(self, line):
-        """removes instance based on class name and id"""
-        args = line.split()
-
-        if not args:
-            print("** class name missing **")
-            return
-
-        class_name = args[0]
-
-        if class_name not in self.classes:
-            print("** class doesn't exist **")
-            return
-
-        if len(args) < 2:
-            print("** instance id missing **")
-            return
-
-        instance_id = args[1]
-        key = class_name + "." + instance_id
-
-        if key in models.storage.all():
-            del models.storage.all()[key]
-            models.storage.save()
-        else:
-            print("** no instance found **")
-
-     def do_show(self, line):
-        """Prints str rep of instance"""
+    def do_show(self, line):
+        """Prints string representation of an instance"""
         args = line.split()
 
         if not args:
@@ -97,8 +70,67 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** no instance found **")
 
+    def do_destroy(self, line):
+        """Deletes an instance based on the class name and id"""
+        args = line.split()
+
+        if not args:
+            print("** class name missing **")
+            return
+
+        class_name = args[0]
+
+        if class_name not in self.classes:
+            print("** class doesn't exist **")
+            return
+
+        if len(args) < 2:
+            print("** instance id missing **")
+            return
+
+        instance_id = args[1]
+        key = class_name + "." + instance_id
+
+        if key in models.storage.all():
+            del models.storage.all()[key]
+            models.storage.save()
+        else:
+            print("** no instance found **")
+    """
+    def do_all(self, line):
+        Prints all string representation of all
+        instances based or not on the class name
+        list_objs = []
+        if line in self.classes:
+            objs = models.storage.all()
+            for inst_name_id, inst in objs.items():
+                cls_name_id = inst_name_id.split(".")
+                if line == cls_name_id[0]:
+                    list_objs.append(str(inst))
+            print(list_objs)
+        else:
+            print("** class doesn't exist **")
+    """
+    def do_all(self, line):
+        """
+        Prints all string representation of all
+        instances based or not on the class name
+        """
+        if line in self.classes:
+            objects = models.storage.all()
+            class_instances = [
+                str(instance) for instance in objects.values()
+                if type(instance).__name__ == line]
+            print(class_instances)
+        elif not line:
+            objects = models.storage.all()
+            all_instances = [str(instance) for instance in objects.values()]
+            print(all_instances)
+        else:
+            print("** class doesn't exist **")
+
     def do_count(self, line):
-        """tracks number of instances of class"""
+        """Counts the number of instances of a class"""
         if line in self.classes:
             objects = models.storage.all()
             class_instances = [
@@ -110,7 +142,10 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
 
     def custom_split(self, line):
-        """splits classname and id"""
+        """
+        Helper function for update
+        splits classname and id
+        """
         args = []
         current_arg = ""
         inside_quotes = False
@@ -130,24 +165,12 @@ class HBNBCommand(cmd.Cmd):
             args.append(current_arg)
 
         return args
-      
-  def do_all(self, line):
-        """Prints str rep of all instances"""
-        if line in self.classes:
-            objects = models.storage.all()
-            class_instances = [
-                str(instance) for instance in objects.values()
-                if type(instance).__name__ == line]
-            print(class_instances)
-        elif not line:
-            objects = models.storage.all()
-            all_instances = [str(instance) for instance in objects.values()]
-            print(all_instances)
-        else:
-            print("** class doesn't exist **")
-        
+
     def do_update(self, line):
-        """updates instance based on class name"""
+        """
+        Updates an instance based on the class name
+        and id by adding or updating attribute
+        """
         args = self.custom_split(line)
 
         if not args:
@@ -192,7 +215,7 @@ class HBNBCommand(cmd.Cmd):
         models.storage.save()
 
     def default(self, line):
-        """automatic command handler method"""
+        """Default command handler method"""
         if line.endswith(".all()"):
             class_name = line[:-6]
             self.do_all(class_name)
@@ -238,6 +261,7 @@ class HBNBCommand(cmd.Cmd):
                         return
         else:
             print("*** Unknown syntax: {}".format(line))
-          
+
+
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
