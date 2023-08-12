@@ -1,28 +1,41 @@
 #!/usr/bin/python3
 
 """
-makes file atorage
+Create class FileStorage
 """
 from models.base_model import BaseModel
+from models.user import User
+from models.amenity import Amenity
+from models.city import City
+from models.place import Place
 from models.review import Review
 from models.state import State
-from models.city import City
-from models.user import User
-from models.place import Place
-from models.amenity import Amenity
 import json
 
 
 class FileStorage:
     """
-    the class file storege
+    Class FileStorage
     """
     __file_path = "file.json"
     __objects = {}
-  
-  def save(self):
+
+    def all(self):
         """
-        JSON file objects
+        returns the dictionary __objects
+        """
+        return self.__objects
+
+    def new(self, obj):
+        """
+        sets in __objects the obj
+        """
+        class_name = obj.__class__.__name__
+        self.__objects[f"{class_name}.{obj.id}"] = obj
+
+    def save(self):
+        """
+        serializes __objects to the JSON file
         """
         non_ser_dict = self.__objects
         ser_dict = {}
@@ -32,25 +45,10 @@ class FileStorage:
 
         with open(self.__file_path, "w") as json_file:
             json.dump(ser_dict, json_file)
-  
-  def new(self, obj):
-        """
-        sets object
-        """
-        class_name = obj.__class__.__name__
-        self.__objects[f"{class_name}.{obj.id}"] = obj
 
-   
-  def all(self):
+    def reload(self):
         """
-        returns dictionary
-        """
-        return self.__objects
-
-
-  def reload(self):
-        """
-        JSON file to __objects
+        deserializes the JSON file to __objects
         """
         try:
             with open(self.__file_path) as json_file:
