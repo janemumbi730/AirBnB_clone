@@ -1,52 +1,45 @@
-#!/usr/bin/python3
-
 import unittest
-import json
-import os
-from models.base_model import BaseModel
 from models.engine.file_storage import FileStorage
+from models.base_model import BaseModel
+import os
+
 
 class TestFileStorage(unittest.TestCase):
     def setUp(self):
-        self.file_path = "file.json"
-        self.storage = FileStorage()
+        if os.path.isfile('file.json'):
+            os.rename('file.json', 'tmpfile.json')
+        self.storage1 = FileStorage()
+        self.model1 = BaseModel()
 
     def tearDown(self):
-        try:
-            os.remove(self.file_path)
-        except FileNotFoundError:
-            pass
+        if os.path.isfile('file.json'):
+            os.remove('file.json')
+        if os.path.isfile('file.json'):
+            os.rename('tmpfile.json', 'file.json')
+        del self.storage1
+        del self.model1
 
-    # def test_all_method_empty(self):
-    #     self.assertEqual(self.storage.all(), {})
+    def test_atrributes(self):
+        self.assertTrue(hasattr(self.model1, 'created_at'))
+        self.assertEqual(self.storage1._FileStorage__file_path, 'file.json')
+        self.assertIsInstance(self.storage1._FileStorage__objects, dict)
 
-    def test_new_method(self):
-        model = BaseModel()
-        model_id = model.id
-        self.storage.new(model)
-        objects = self.storage.all()
-        self.assertIn(f"BaseModel.{model_id}", objects)
+    def test_all(self):
+        """ test both all and new """
+        my_dict = self.storage1.all()
+        my_id = 'BaseModel.' + self.model1.id
+        self.assertIsInstance(my_dict, dict)
+        self.assertIn(my_id, my_dict)
 
-    def test_save_method(self):
-        model = BaseModel()
-        model_id = model.id
-        self.storage.new(model)
-        self.storage.save()
-        with open(self.file_path, 'r') as file:
-            data = json.load(file)
-            key = f"BaseModel.{model_id}"
-            self.assertIn(key, data)
-
-    def test_reload_method(self):
-        model = BaseModel()
-        model_id = model.id
-        self.storage.new(model)
-        self.storage.save()
-        self.storage.reload()
-        objects = self.storage.all()
-        key = f"BaseModel.{model_id}"
-        self.assertIn(key, objects)
-        self.assertTrue(isinstance(objects[key], BaseModel))
+    def test_reload(self):
+        self.model1.save()
+        self.assertTrue(os.path.isfile('file.json'))
+        tmp_obj = BaseModel()
+        tmp_id = 'BaseModel.' + tmp_obj.id
+        tmp_obj.save()
+        del self.storage1._FileStorage__objects[tmp_id]
+        self.storage1.reload()
+        self.assertIn(tmp_id, self.storage1.all())
 
 if __name__ == '__main__':
     unittest.main()
