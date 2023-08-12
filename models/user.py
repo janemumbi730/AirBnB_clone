@@ -1,16 +1,21 @@
 #!/usr/bin/python3
-
 """
-makes class User
+    module: User
 """
 
 from models.base_model import BaseModel
 
+
 class User(BaseModel):
     """
-    the user class
-    """
+class User:
+attributes:
+email(str): user's email
+password(str): user's acc password
+first_name(str): user's fname
+last_name(str): user's lname
+"""
     email = ""
-    password = ""
     first_name = ""
     last_name = ""
+    password = ""
