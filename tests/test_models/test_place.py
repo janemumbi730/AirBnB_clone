@@ -8,19 +8,6 @@ class TestPlace(unittest.TestCase):
 
     def tearDown(self):
         self.place = None
-      
-    def test_str_method(self):
-        place_str = str(self.place)
-        self.assertIn("[Place]", place_str)
-        self.assertIn("id", place_str)
-        self.assertIn("created_at", place_str)
-        self.assertIn("updated_at", place_str)
-
-    def test_save_method(self):
-        old_updated_at = self.place.updated_at
-        self.place.save()
-        new_updated_at = self.place.updated_at
-        self.assertNotEqual(old_updated_at, new_updated_at)
 
     def test_attributes_initialization(self):
         self.assertEqual(self.place.city_id, "")
@@ -37,6 +24,26 @@ class TestPlace(unittest.TestCase):
         self.assertTrue(hasattr(self.place, "id"))
         self.assertTrue(hasattr(self.place, "created_at"))
         self.assertTrue(hasattr(self.place, "updated_at"))
+
+    def test_str_method(self):
+        place_str = str(self.place)
+        self.assertIn("[Place]", place_str)
+        self.assertIn("id", place_str)
+        self.assertIn("created_at", place_str)
+        self.assertIn("updated_at", place_str)
+
+    # def test_to_dict_method(self):
+    #     place_dict = self.place.to_dict()
+    #     self.assertTrue(isinstance(place_dict, dict))
+    #     self.assertEqual(place_dict["__class__"], "Place")
+    #     self.assertEqual(self.place.__dict__, place_dict)
+
+    def test_save_method(self):
+        old_updated_at = self.place.updated_at
+        self.place.save()
+        new_updated_at = self.place.updated_at
+        self.assertNotEqual(old_updated_at, new_updated_at)
+
 
 if __name__ == "__main__":
     unittest.main()
