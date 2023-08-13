@@ -1,6 +1,6 @@
 #!usr/bin/python3
 """
-    creates class Amenity
+    module: Amenity
 """
 from models.base_model import BaseModel
 
@@ -8,7 +8,7 @@ from models.base_model import BaseModel
 class Amenity(BaseModel):
     """
         class Amenity
-        attributes:
-            name: name of amenity
+        public attributes:
+            name(str): name of amenity
     """
     name = ""
