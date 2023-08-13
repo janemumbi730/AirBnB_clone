@@ -1,13 +1,14 @@
 #!/usr/bin/python3
-"""
-Class:State
-"""
 
+"""
+Create class State
+"""
 
 from models.base_model import BaseModel
 
 
 class State(BaseModel):
-    """class for state
-"""
+    """
+    class State
+    """
     name = ""
