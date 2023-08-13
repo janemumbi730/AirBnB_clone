@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 """
-Create class BaseModel
+module: class BaseModel
+contains methods for persistence of data
+keeps track of it's number of instances
 """
-from uuid import uuid4
-from datetime import datetime
 import models
+from datetime import datetime
+from uuid import uuid4
 
 
 class BaseModel:
@@ -14,6 +16,9 @@ class BaseModel:
     def __init__(self, *args, **kwargs):
         """
             initializes all instances of BaseModel
+            attributes:
+                id(string): unique id for every instance of BaseModel
+                created_at(datetime): time at which instance was created
         """
         if kwargs:
             self.updated_at = datetime.\
@@ -31,7 +36,7 @@ class BaseModel:
 
     def __str__(self):
         """
-            prints a string representation 
+            prints a string representation of BaseClass instance
         """
         return '[{}] ({}) {}'\
             .format(self.__class__.__name__, self.id, self.__dict__)
@@ -39,13 +44,15 @@ class BaseModel:
     def save(self):
         """
             updates the public instance attribute
+            updated_at with the current datetime
         """
         self.updated_at = datetime.utcnow()
         models.storage.save()
 
     def to_dict(self):
         """
-            returns dictionary of key values of instance
+            returns a dictionary containing all
+            keys/values of __dict__ of the instance
         """
         dict = self.__dict__.copy()
         dict['created_at'] = self.created_at.isoformat()
