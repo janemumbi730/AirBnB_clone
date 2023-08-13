@@ -36,14 +36,12 @@ class FileStorage:
         """
         return FileStorage.__objects
 
-
     def new(self, obj):
         """
             sets in __objects the obj
         """
         key = obj.__class__.__name__ + '.' + str(obj.id)
         FileStorage.__objects[key] = obj
-
 
     def save(self):
         """
@@ -54,7 +52,6 @@ class FileStorage:
             my_dict[k] = v.to_dict()
         with open(FileStorage.__file_path, mode='w', encoding='UTF-8') as f:
             json.dump(my_dict, f)
-
 
     def reload(self):
         """
